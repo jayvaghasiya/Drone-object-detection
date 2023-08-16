@@ -1,0 +1,349 @@
+--------- config parameters ----------
+{
+    "arch_params": {
+        "schema": null
+    },
+    "checkpoint_params": {
+        "load_checkpoint": false,
+        "schema": null
+    },
+    "training_hyperparams": {
+        "lr_warmup_epochs": 3,
+        "lr_warmup_steps": 0,
+        "lr_cooldown_epochs": 0,
+        "warmup_initial_lr": 1e-06,
+        "cosine_final_lr_ratio": 0.1,
+        "optimizer": "Adam",
+        "optimizer_params": {
+            "weight_decay": 0.0001
+        },
+        "criterion_params": {},
+        "ema": true,
+        "batch_accumulate": 4,
+        "ema_params": {
+            "decay": 0.9,
+            "decay_type": "threshold"
+        },
+        "zero_weight_decay_on_bias_and_bn": true,
+        "load_opt_params": true,
+        "run_validation_freq": 1,
+        "run_test_freq": 1,
+        "save_model": true,
+        "metric_to_watch": "mAP@0.50",
+        "launch_tensorboard": false,
+        "tb_files_user_prompt": false,
+        "silent_mode": false,
+        "mixed_precision": true,
+        "tensorboard_port": null,
+        "save_ckpt_epoch_list": [],
+        "average_best_models": true,
+        "dataset_statistics": false,
+        "save_tensorboard_to_s3": false,
+        "lr_schedule_function": null,
+        "train_metrics_list": [],
+        "valid_metrics_list": [
+            "DetectionMetrics_050(\n  (post_prediction_callback): PPYoloEPostPredictionCallback()\n)"
+        ],
+        "greater_metric_to_watch_is_better": true,
+        "precise_bn": false,
+        "precise_bn_batch_size": null,
+        "seed": 42,
+        "lr_mode": "cosine",
+        "phase_callbacks": null,
+        "log_installed_packages": true,
+        "sg_logger": "base_sg_logger",
+        "sg_logger_params": {
+            "tb_files_user_prompt": false,
+            "project_name": "",
+            "launch_tensorboard": false,
+            "tensorboard_port": null,
+            "save_checkpoints_remote": false,
+            "save_tensorboard_remote": false,
+            "save_logs_remote": false
+        },
+        "warmup_mode": "linear_epoch_step",
+        "step_lr_update_freq": null,
+        "lr_updates": [],
+        "clip_grad_norm": null,
+        "pre_prediction_callback": null,
+        "ckpt_best_name": "ckpt_best.pth",
+        "enable_qat": false,
+        "resume": false,
+        "resume_path": null,
+        "ckpt_name": "ckpt_latest.pth",
+        "resume_strict_load": false,
+        "sync_bn": false,
+        "kill_ddp_pgroup_on_end": true,
+        "max_train_batches": null,
+        "max_valid_batches": null,
+        "resume_from_remote_sg_logger": false,
+        "torch_compile": false,
+        "torch_compile_loss": false,
+        "torch_compile_options": {
+            "mode": "reduce-overhead",
+            "fullgraph": false,
+            "dynamic": false,
+            "backend": "inductor",
+            "options": null,
+            "disable": false
+        },
+        "schema": {
+            "type": "object",
+            "properties": {
+                "max_epochs": {
+                    "type": "number",
+                    "minimum": 1
+                },
+                "lr_decay_factor": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "lr_warmup_epochs": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 10
+                },
+                "initial_lr": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 10
+                }
+            },
+            "if": {
+                "properties": {
+                    "lr_mode": {
+                        "const": "step"
+                    }
+                }
+            },
+            "then": {
+                "required": [
+                    "lr_updates",
+                    "lr_decay_factor"
+                ]
+            },
+            "required": [
+                "max_epochs",
+                "lr_mode",
+                "initial_lr",
+                "loss"
+            ]
+        },
+        "initial_lr": 0.0005,
+        "max_epochs": 100,
+        "loss": "PPYoloELoss(\n  (static_assigner): ATSSAssigner()\n  (assigner): TaskAlignedAssigner()\n)"
+    },
+    "dataset_params": {
+        "train_dataset_params": "{'data_dir': '../dataset', 'images_dir': 'train/images', 'labels_dir': 'train/labels', 'classes': ['person', 'small-vehicle', 'medium-vehicle', 'big-vehicle', 'dummy'], 'input_dim': [640, 640], 'cache_dir': None, 'cache': False, 'transforms': [{'DetectionMosaic': {'input_dim': [640, 640], 'prob': 1.0}}, {'DetectionRandomAffine': {'degrees': 10.0, 'translate': 0.1, 'scales': [0.1, 2], 'shear': 2.0, 'target_size': [640, 640], 'filter_box_candidates': True, 'wh_thr': 2, 'area_thr': 0.1, 'ar_thr': 20}}, {'DetectionMixup': {'input_dim': [640, 640], 'mixup_scale': [0.5, 1.5], 'prob': 1.0, 'flip_prob': 0.5}}, {'DetectionHSV': {'prob': 1.0, 'hgain': 5, 'sgain': 30, 'vgain': 30}}, {'DetectionHorizontalFlip': {'prob': 0.5}}, {'DetectionPaddedRescale': {'input_dim': [640, 640]}}, {'DetectionTargetsFormatTransform': {'input_dim': [640, 640], 'output_format': 'LABEL_CXCYWH'}}], 'class_inclusion_list': None, 'max_num_samples': None}",
+        "train_dataloader_params": {
+            "batch_size": 12,
+            "num_workers": 4,
+            "shuffle": true,
+            "drop_last": true,
+            "pin_memory": true,
+            "collate_fn": "<super_gradients.training.utils.detection_utils.DetectionCollateFN object at 0x7fc1741f06a0>"
+        },
+        "valid_dataset_params": "{'data_dir': '../dataset', 'images_dir': 'valid/images', 'labels_dir': 'valid/labels', 'classes': ['person', 'small-vehicle', 'medium-vehicle', 'big-vehicle', 'dummy'], 'input_dim': [640, 640], 'cache_dir': None, 'cache': False, 'transforms': [{'DetectionPaddedRescale': {'input_dim': [640, 640]}}, {'DetectionTargetsFormatTransform': {'input_dim': [640, 640], 'output_format': 'LABEL_CXCYWH'}}], 'class_inclusion_list': None, 'max_num_samples': None}",
+        "valid_dataloader_params": {
+            "batch_size": 12,
+            "num_workers": 4,
+            "drop_last": false,
+            "pin_memory": true,
+            "collate_fn": "<super_gradients.training.utils.detection_utils.DetectionCollateFN object at 0x7fc12106f310>"
+        }
+    },
+    "additional_log_items": {
+        "initial_LR": 0.0005,
+        "num_devices": 1,
+        "multi_gpu": "None",
+        "device_type": "NVIDIA GeForce RTX 3090",
+        "installed_packages": [
+            "Distribution(key='babel', version='2.12.1', requires=[], direct_url=None)",
+            "Distribution(key='deprecated', version='1.2.14', requires=[Requirement.parse('wrapt<2,>=1.10')], direct_url=None)",
+            "Distribution(key='jinja2', version='3.1.2', requires=[Requirement.parse('MarkupSafe>=2.0')], direct_url=None)",
+            "Distribution(key='markdown', version='3.4.4', requires=[Requirement.parse('importlib-metadata>=4.4; python_version < \"3.10\"')], direct_url=None)",
+            "Distribution(key='markupsafe', version='2.1.3', requires=[], direct_url=None)",
+            "Distribution(key='pillow', version='10.0.0', requires=[], direct_url=None)",
+            "Distribution(key='pyyaml', version='6.0.1', requires=[], direct_url=None)",
+            "Distribution(key='pygments', version='2.16.1', requires=[], direct_url=None)",
+            "Distribution(key='sphinx', version='4.0.3', requires=[Requirement.parse('sphinxcontrib-applehelp'), Requirement.parse('sphinxcontrib-devhelp'), Requirement.parse('sphinxcontrib-jsmath'), Requirement.parse('sphinxcontrib-htmlhelp'), Requirement.parse('sphinxcontrib-serializinghtml'), Requirement.parse('sphinxcontrib-qthelp'), Requirement.parse('Jinja2>=2.3'), Requirement.parse('Pygments>=2.0'), Requirement.parse('docutils<0.18,>=0.14'), Requirement.parse('snowballstemmer>=1.1'), Requirement.parse('babel>=1.3'), Requirement.parse('alabaster<0.8,>=0.7'), Requirement.parse('imagesize'), Requirement.parse('requests>=2.5.0'), Requirement.parse('setuptools'), Requirement.parse('packaging')], direct_url=None)",
+            "Distribution(key='werkzeug', version='2.3.6', requires=[Requirement.parse('MarkupSafe>=2.1.1')], direct_url=None)",
+            "Distribution(key='absl-py', version='1.4.0', requires=[], direct_url=None)",
+            "Distribution(key='alabaster', version='0.7.13', requires=[], direct_url=None)",
+            "Distribution(key='antlr4-python3-runtime', version='4.9.3', requires=[], direct_url=None)",
+            "Distribution(key='attrs', version='23.1.0', requires=[], direct_url=None)",
+            "Distribution(key='boto3', version='1.28.22', requires=[Requirement.parse('botocore<1.32.0,>=1.31.22'), Requirement.parse('jmespath<2.0.0,>=0.7.1'), Requirement.parse('s3transfer<0.7.0,>=0.6.0')], direct_url=None)",
+            "Distribution(key='botocore', version='1.31.22', requires=[Requirement.parse('jmespath<2.0.0,>=0.7.1'), Requirement.parse('python-dateutil<3.0.0,>=2.1'), Requirement.parse('urllib3<1.27,>=1.25.4')], direct_url=None)",
+            "Distribution(key='build', version='0.10.0', requires=[Requirement.parse('packaging>=19.0'), Requirement.parse('pyproject_hooks'), Requirement.parse('tomli>=1.1.0; python_version < \"3.11\"')], direct_url=None)",
+            "Distribution(key='cachetools', version='5.3.1', requires=[], direct_url=None)",
+            "Distribution(key='certifi', version='2023.7.22', requires=[], direct_url=None)",
+            "Distribution(key='charset-normalizer', version='3.2.0', requires=[], direct_url=None)",
+            "Distribution(key='click', version='8.1.6', requires=[], direct_url=None)",
+            "Distribution(key='cmake', version='3.27.1', requires=[], direct_url=None)",
+            "Distribution(key='coloredlogs', version='15.0.1', requires=[Requirement.parse('humanfriendly>=9.1')], direct_url=None)",
+            "Distribution(key='contourpy', version='1.1.0', requires=[Requirement.parse('numpy>=1.16')], direct_url=None)",
+            "Distribution(key='coverage', version='5.3.1', requires=[], direct_url=None)",
+            "Distribution(key='cycler', version='0.11.0', requires=[], direct_url=None)",
+            "Distribution(key='docutils', version='0.17.1', requires=[], direct_url=None)",
+            "Distribution(key='einops', version='0.3.2', requires=[], direct_url=None)",
+            "Distribution(key='filelock', version='3.12.2', requires=[], direct_url=None)",
+            "Distribution(key='flatbuffers', version='23.5.26', requires=[], direct_url=None)",
+            "Distribution(key='fonttools', version='4.42.0', requires=[], direct_url=None)",
+            "Distribution(key='future', version='0.18.3', requires=[], direct_url=None)",
+            "Distribution(key='google-auth', version='2.22.0', requires=[Requirement.parse('cachetools<6.0,>=2.0.0'), Requirement.parse('pyasn1-modules>=0.2.1'), Requirement.parse('rsa<5,>=3.1.4'), Requirement.parse('six>=1.9.0'), Requirement.parse('urllib3<2.0')], direct_url=None)",
+            "Distribution(key='google-auth-oauthlib', version='1.0.0', requires=[Requirement.parse('google-auth>=2.15.0'), Requirement.parse('requests-oauthlib>=0.7.0')], direct_url=None)",
+            "Distribution(key='grpcio', version='1.56.2', requires=[], direct_url=None)",
+            "Distribution(key='humanfriendly', version='10.0', requires=[], direct_url=None)",
+            "Distribution(key='hydra-core', version='1.3.2', requires=[Requirement.parse('omegaconf<2.4,>=2.2'), Requirement.parse('antlr4-python3-runtime==4.9.*'), Requirement.parse('packaging')], direct_url=None)",
+            "Distribution(key='idna', version='3.4', requires=[], direct_url=None)",
+            "Distribution(key='imagesize', version='1.4.1', requires=[], direct_url=None)",
+            "Distribution(key='importlib-metadata', version='6.8.0', requires=[Requirement.parse('zipp>=0.5')], direct_url=None)",
+            "Distribution(key='importlib-resources', version='6.0.1', requires=[Requirement.parse('zipp>=3.1.0; python_version < \"3.10\"')], direct_url=None)",
+            "Distribution(key='jmespath', version='1.0.1', requires=[], direct_url=None)",
+            "Distribution(key='json-tricks', version='3.16.1', requires=[], direct_url=None)",
+            "Distribution(key='jsonschema', version='4.19.0', requires=[Requirement.parse('attrs>=22.2.0'), Requirement.parse('jsonschema-specifications>=2023.03.6'), Requirement.parse('referencing>=0.28.4'), Requirement.parse('rpds-py>=0.7.1')], direct_url=None)",
+            "Distribution(key='jsonschema-specifications', version='2023.7.1', requires=[Requirement.parse('referencing>=0.28.0')], direct_url=None)",
+            "Distribution(key='kiwisolver', version='1.4.4', requires=[], direct_url=None)",
+            "Distribution(key='lit', version='16.0.6', requires=[], direct_url=None)",
+            "Distribution(key='markdown-it-py', version='3.0.0', requires=[Requirement.parse('mdurl~=0.1')], direct_url=None)",
+            "Distribution(key='matplotlib', version='3.7.2', requires=[Requirement.parse('contourpy>=1.0.1'), Requirement.parse('cycler>=0.10'), Requirement.parse('fonttools>=4.22.0'), Requirement.parse('kiwisolver>=1.0.1'), Requirement.parse('numpy>=1.20'), Requirement.parse('packaging>=20.0'), Requirement.parse('pillow>=6.2.0'), Requirement.parse('pyparsing<3.1,>=2.3.1'), Requirement.parse('python-dateutil>=2.7'), Requirement.parse('importlib-resources>=3.2.0; python_version < \"3.10\"')], direct_url=None)",
+            "Distribution(key='mdurl', version='0.1.2', requires=[], direct_url=None)",
+            "Distribution(key='mpmath', version='1.3.0', requires=[], direct_url=None)",
+            "Distribution(key='networkx', version='3.1', requires=[], direct_url=None)",
+            "Distribution(key='numpy', version='1.23.0', requires=[], direct_url=None)",
+            "Distribution(key='nvidia-cublas-cu11', version='11.10.3.66', requires=[Requirement.parse('setuptools'), Requirement.parse('wheel')], direct_url=None)",
+            "Distribution(key='nvidia-cuda-cupti-cu11', version='11.7.101', requires=[Requirement.parse('setuptools'), Requirement.parse('wheel')], direct_url=None)",
+            "Distribution(key='nvidia-cuda-nvrtc-cu11', version='11.7.99', requires=[], direct_url=None)",
+            "Distribution(key='nvidia-cuda-runtime-cu11', version='11.7.99', requires=[Requirement.parse('setuptools'), Requirement.parse('wheel')], direct_url=None)",
+            "Distribution(key='nvidia-cudnn-cu11', version='8.5.0.96', requires=[Requirement.parse('nvidia-cublas-cu11')], direct_url=None)",
+            "Distribution(key='nvidia-cufft-cu11', version='10.9.0.58', requires=[], direct_url=None)",
+            "Distribution(key='nvidia-curand-cu11', version='10.2.10.91', requires=[Requirement.parse('setuptools'), Requirement.parse('wheel')], direct_url=None)",
+            "Distribution(key='nvidia-cusolver-cu11', version='11.4.0.1', requires=[Requirement.parse('nvidia-cublas-cu11')], direct_url=None)",
+            "Distribution(key='nvidia-cusparse-cu11', version='11.7.4.91', requires=[Requirement.parse('setuptools'), Requirement.parse('wheel')], direct_url=None)",
+            "Distribution(key='nvidia-nccl-cu11', version='2.14.3', requires=[], direct_url=None)",
+            "Distribution(key='nvidia-nvtx-cu11', version='11.7.91', requires=[Requirement.parse('setuptools'), Requirement.parse('wheel')], direct_url=None)",
+            "Distribution(key='oauthlib', version='3.2.2', requires=[], direct_url=None)",
+            "Distribution(key='omegaconf', version='2.3.0', requires=[Requirement.parse('antlr4-python3-runtime==4.9.*'), Requirement.parse('PyYAML>=5.1.0')], direct_url=None)",
+            "Distribution(key='onnx', version='1.13.0', requires=[Requirement.parse('numpy>=1.16.6'), Requirement.parse('protobuf<4,>=3.20.2'), Requirement.parse('typing-extensions>=3.6.2.1')], direct_url=None)",
+            "Distribution(key='onnx-simplifier', version='0.4.33', requires=[Requirement.parse('onnx'), Requirement.parse('rich')], direct_url=None)",
+            "Distribution(key='onnxruntime', version='1.13.1', requires=[Requirement.parse('coloredlogs'), Requirement.parse('flatbuffers'), Requirement.parse('numpy>=1.21.6'), Requirement.parse('packaging'), Requirement.parse('protobuf'), Requirement.parse('sympy')], direct_url=None)",
+            "Distribution(key='opencv-python', version='4.8.0.76', requires=[Requirement.parse('numpy>=1.17.0; python_version >= \"3.7\"'), Requirement.parse('numpy>=1.17.3; python_version >= \"3.8\"'), Requirement.parse('numpy>=1.19.3; python_version >= \"3.9\"')], direct_url=None)",
+            "Distribution(key='packaging', version='23.1', requires=[], direct_url=None)",
+            "Distribution(key='pip', version='23.2.1', requires=[], direct_url=None)",
+            "Distribution(key='pip-tools', version='7.3.0', requires=[Requirement.parse('build'), Requirement.parse('click>=8'), Requirement.parse('pip>=22.2'), Requirement.parse('setuptools'), Requirement.parse('wheel'), Requirement.parse('tomli; python_version < \"3.11\"')], direct_url=None)",
+            "Distribution(key='protobuf', version='3.20.3', requires=[], direct_url=None)",
+            "Distribution(key='psutil', version='5.9.5', requires=[], direct_url=None)",
+            "Distribution(key='pydeprecate', version='0.3.2', requires=[], direct_url=None)",
+            "Distribution(key='pyasn1', version='0.5.0', requires=[], direct_url=None)",
+            "Distribution(key='pyasn1-modules', version='0.3.0', requires=[Requirement.parse('pyasn1<0.6.0,>=0.4.6')], direct_url=None)",
+            "Distribution(key='pycocotools', version='2.0.6', requires=[Requirement.parse('matplotlib>=2.1.0'), Requirement.parse('numpy')], direct_url=None)",
+            "Distribution(key='pyparsing', version='2.4.5', requires=[], direct_url=None)",
+            "Distribution(key='pyproject-hooks', version='1.0.0', requires=[Requirement.parse('tomli>=1.1.0; python_version < \"3.11\"')], direct_url=None)",
+            "Distribution(key='python-dateutil', version='2.8.2', requires=[Requirement.parse('six>=1.5')], direct_url=None)",
+            "Distribution(key='rapidfuzz', version='3.2.0', requires=[], direct_url=None)",
+            "Distribution(key='referencing', version='0.30.2', requires=[Requirement.parse('attrs>=22.2.0'), Requirement.parse('rpds-py>=0.7.0')], direct_url=None)",
+            "Distribution(key='requests', version='2.31.0', requires=[Requirement.parse('charset-normalizer<4,>=2'), Requirement.parse('idna<4,>=2.5'), Requirement.parse('urllib3<3,>=1.21.1'), Requirement.parse('certifi>=2017.4.17')], direct_url=None)",
+            "Distribution(key='requests-oauthlib', version='1.3.1', requires=[Requirement.parse('oauthlib>=3.0.0'), Requirement.parse('requests>=2.0.0')], direct_url=None)",
+            "Distribution(key='rich', version='13.5.2', requires=[Requirement.parse('markdown-it-py>=2.2.0'), Requirement.parse('pygments<3.0.0,>=2.13.0')], direct_url=None)",
+            "Distribution(key='rpds-py', version='0.9.2', requires=[], direct_url=None)",
+            "Distribution(key='rsa', version='4.9', requires=[Requirement.parse('pyasn1>=0.1.3')], direct_url=None)",
+            "Distribution(key='s3transfer', version='0.6.1', requires=[Requirement.parse('botocore<2.0a.0,>=1.12.36')], direct_url=None)",
+            "Distribution(key='scipy', version='1.11.1', requires=[Requirement.parse('numpy<1.28.0,>=1.21.6')], direct_url=None)",
+            "Distribution(key='setuptools', version='68.0.0', requires=[], direct_url=None)",
+            "Distribution(key='six', version='1.16.0', requires=[], direct_url=None)",
+            "Distribution(key='snowballstemmer', version='2.2.0', requires=[], direct_url=None)",
+            "Distribution(key='sphinx-rtd-theme', version='1.2.2', requires=[Requirement.parse('sphinx<7,>=1.6'), Requirement.parse('docutils<0.19'), Requirement.parse('sphinxcontrib-jquery<5,>=4')], direct_url=None)",
+            "Distribution(key='sphinxcontrib-applehelp', version='1.0.4', requires=[], direct_url=None)",
+            "Distribution(key='sphinxcontrib-devhelp', version='1.0.2', requires=[], direct_url=None)",
+            "Distribution(key='sphinxcontrib-htmlhelp', version='2.0.1', requires=[], direct_url=None)",
+            "Distribution(key='sphinxcontrib-jquery', version='4.1', requires=[Requirement.parse('Sphinx>=1.8')], direct_url=None)",
+            "Distribution(key='sphinxcontrib-jsmath', version='1.0.1', requires=[], direct_url=None)",
+            "Distribution(key='sphinxcontrib-qthelp', version='1.0.3', requires=[], direct_url=None)",
+            "Distribution(key='sphinxcontrib-serializinghtml', version='1.1.5', requires=[], direct_url=None)",
+            "Distribution(key='stringcase', version='1.2.0', requires=[], direct_url=None)",
+            "Distribution(key='super-gradients', version='3.1.3', requires=[Requirement.parse('torch>=1.9.0'), Requirement.parse('tqdm>=4.57.0'), Requirement.parse('boto3>=1.17.15'), Requirement.parse('jsonschema>=3.2.0'), Requirement.parse('Deprecated>=1.2.11'), Requirement.parse('opencv-python>=4.5.1'), Requirement.parse('scipy>=1.6.1'), Requirement.parse('matplotlib>=3.3.4'), Requirement.parse('psutil>=5.8.0'), Requirement.parse('tensorboard>=2.4.1'), Requirement.parse('setuptools>=21.0.0'), Requirement.parse('coverage~=5.3.1'), Requirement.parse('torchvision>=0.10.0'), Requirement.parse('sphinx~=4.0.2'), Requirement.parse('sphinx-rtd-theme'), Requirement.parse('torchmetrics==0.8'), Requirement.parse('hydra-core>=1.2.0'), Requirement.parse('omegaconf'), Requirement.parse('onnxruntime==1.13.1'), Requirement.parse('onnx==1.13.0'), Requirement.parse('pillow!=8.3,>=5.3.0'), Requirement.parse('pip-tools>=6.12.1'), Requirement.parse('pyparsing==2.4.5'), Requirement.parse('einops==0.3.2'), Requirement.parse('pycocotools==2.0.6'), Requirement.parse('protobuf==3.20.3'), Requirement.parse('treelib==1.6.1'), Requirement.parse('termcolor==1.1.0'), Requirement.parse('packaging>=20.4'), Requirement.parse('wheel>=0.38.0'), Requirement.parse('pygments>=2.7.4'), Requirement.parse('stringcase>=1.2.0'), Requirement.parse('numpy<=1.23'), Requirement.parse('rapidfuzz'), Requirement.parse('json-tricks==3.16.1'), Requirement.parse('onnx-simplifier<1.0,>=0.3.6')], direct_url=None)",
+            "Distribution(key='sympy', version='1.12', requires=[Requirement.parse('mpmath>=0.19')], direct_url=None)",
+            "Distribution(key='tensorboard', version='2.14.0', requires=[Requirement.parse('absl-py>=0.4'), Requirement.parse('grpcio>=1.48.2'), Requirement.parse('google-auth<3,>=1.6.3'), Requirement.parse('google-auth-oauthlib<1.1,>=0.5'), Requirement.parse('markdown>=2.6.8'), Requirement.parse('numpy>=1.12.0'), Requirement.parse('protobuf>=3.19.6'), Requirement.parse('requests<3,>=2.21.0'), Requirement.parse('setuptools>=41.0.0'), Requirement.parse('tensorboard-data-server<0.8.0,>=0.7.0'), Requirement.parse('werkzeug>=1.0.1'), Requirement.parse('wheel>=0.26')], direct_url=None)",
+            "Distribution(key='tensorboard-data-server', version='0.7.1', requires=[], direct_url=None)",
+            "Distribution(key='termcolor', version='1.1.0', requires=[], direct_url=None)",
+            "Distribution(key='tomli', version='2.0.1', requires=[], direct_url=None)",
+            "Distribution(key='torch', version='2.0.1', requires=[Requirement.parse('filelock'), Requirement.parse('typing-extensions'), Requirement.parse('sympy'), Requirement.parse('networkx'), Requirement.parse('jinja2'), Requirement.parse('nvidia-cuda-nvrtc-cu11==11.7.99; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-cuda-runtime-cu11==11.7.99; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-cuda-cupti-cu11==11.7.101; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-cudnn-cu11==8.5.0.96; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-cublas-cu11==11.10.3.66; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-cufft-cu11==10.9.0.58; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-curand-cu11==10.2.10.91; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-cusolver-cu11==11.4.0.1; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-cusparse-cu11==11.7.4.91; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-nccl-cu11==2.14.3; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('nvidia-nvtx-cu11==11.7.91; platform_system == \"Linux\" and platform_machine == \"x86_64\"'), Requirement.parse('triton==2.0.0; platform_system == \"Linux\" and platform_machine == \"x86_64\"')], direct_url=None)",
+            "Distribution(key='torchmetrics', version='0.8.0', requires=[Requirement.parse('numpy>=1.17.2'), Requirement.parse('torch>=1.3.1'), Requirement.parse('pyDeprecate==0.3.*'), Requirement.parse('packaging')], direct_url=None)",
+            "Distribution(key='torchvision', version='0.15.2', requires=[Requirement.parse('numpy'), Requirement.parse('requests'), Requirement.parse('torch==2.0.1'), Requirement.parse('pillow!=8.3.*,>=5.3.0')], direct_url=None)",
+            "Distribution(key='tqdm', version='4.66.0', requires=[], direct_url=None)",
+            "Distribution(key='treelib', version='1.6.1', requires=[Requirement.parse('future')], direct_url=None)",
+            "Distribution(key='triton', version='2.0.0', requires=[Requirement.parse('cmake'), Requirement.parse('filelock'), Requirement.parse('torch'), Requirement.parse('lit')], direct_url=None)",
+            "Distribution(key='typing-extensions', version='4.7.1', requires=[], direct_url=None)",
+            "Distribution(key='urllib3', version='1.26.16', requires=[], direct_url=None)",
+            "Distribution(key='wheel', version='0.38.4', requires=[], direct_url=None)",
+            "Distribution(key='wrapt', version='1.15.0', requires=[], direct_url=None)",
+            "Distribution(key='zipp', version='3.16.2', requires=[], direct_url=None)"
+        ]
+    }
+}
+------- config parameters end --------
+
+Epoch 0 (1/100)  - Inference_Time: 423911.875	Train_PPYoloELoss/loss_cls: 1.132775068283081	Train_PPYoloELoss/loss_iou: 0.34024861454963684	Train_PPYoloELoss/loss_dfl: 0.8947087526321411	Train_PPYoloELoss/loss: 2.4307429790496826	Valid_PPYoloELoss/loss_cls: 0.9816198348999023	Valid_PPYoloELoss/loss_iou: 0.2982983887195587	Valid_PPYoloELoss/loss_dfl: 0.767139196395874	Valid_PPYoloELoss/loss: 2.1109371185302734	Valid_Precision@0.50: 0.2364186942577362	Valid_Recall@0.50: 0.2674308717250824	Valid_mAP@0.50: 0.2123434841632843	Valid_F1@0.50: 0.22941970825195312	
+
+Epoch 0 (1/100)  - LR/Param_group_0: 1e-06	LR/Param_group_1: 1e-06	
+
+Epoch 1 (2/100)  - Inference_Time: 437038.71875	Train_PPYoloELoss/loss_cls: 0.8553433418273926	Train_PPYoloELoss/loss_iou: 0.27598488330841064	Train_PPYoloELoss/loss_dfl: 0.7694541215896606	Train_PPYoloELoss/loss: 1.9300326108932495	Valid_PPYoloELoss/loss_cls: 0.8189465403556824	Valid_PPYoloELoss/loss_iou: 0.24696487188339233	Valid_PPYoloELoss/loss_dfl: 0.7053980231285095	Valid_PPYoloELoss/loss: 1.789055585861206	Valid_Precision@0.50: 0.35797399282455444	Valid_Recall@0.50: 0.5245438814163208	Valid_mAP@0.50: 0.4486973285675049	Valid_F1@0.50: 0.40651965141296387	
+
+Epoch 1 (2/100)  - LR/Param_group_0: 0.00016733333333333333	LR/Param_group_1: 0.00016733333333333333	
+
+Epoch 2 (3/100)  - Inference_Time: 436929.375	Train_PPYoloELoss/loss_cls: 0.8350447416305542	Train_PPYoloELoss/loss_iou: 0.2682759761810303	Train_PPYoloELoss/loss_dfl: 0.7602414488792419	Train_PPYoloELoss/loss: 1.8858551979064941	Valid_PPYoloELoss/loss_cls: 0.8123419880867004	Valid_PPYoloELoss/loss_iou: 0.2455328404903412	Valid_PPYoloELoss/loss_dfl: 0.7031757235527039	Valid_PPYoloELoss/loss: 1.7777607440948486	Valid_Precision@0.50: 0.36968517303466797	Valid_Recall@0.50: 0.5368257761001587	Valid_mAP@0.50: 0.46061253547668457	Valid_F1@0.50: 0.42586296796798706	
+
+Epoch 2 (3/100)  - LR/Param_group_0: 0.0003336666666666667	LR/Param_group_1: 0.0003336666666666667	
+
+Epoch 3 (4/100)  - Inference_Time: 434350.65625	Train_PPYoloELoss/loss_cls: 0.826950192451477	Train_PPYoloELoss/loss_iou: 0.2650429904460907	Train_PPYoloELoss/loss_dfl: 0.7571311593055725	Train_PPYoloELoss/loss: 1.8681262731552124	Valid_PPYoloELoss/loss_cls: 0.8503613471984863	Valid_PPYoloELoss/loss_iou: 0.24875478446483612	Valid_PPYoloELoss/loss_dfl: 0.7077381014823914	Valid_PPYoloELoss/loss: 1.8261184692382812	Valid_Precision@0.50: 0.3301638960838318	Valid_Recall@0.50: 0.5184520483016968	Valid_mAP@0.50: 0.4329008460044861	Valid_F1@0.50: 0.38793060183525085	
+
+Epoch 3 (4/100)  - LR/Param_group_0: 0.0005	LR/Param_group_1: 0.0005	
+
+Epoch 4 (5/100)  - Inference_Time: 437452.8125	Train_PPYoloELoss/loss_cls: 0.8146336078643799	Train_PPYoloELoss/loss_iou: 0.2599853277206421	Train_PPYoloELoss/loss_dfl: 0.7496956586837769	Train_PPYoloELoss/loss: 1.8394469022750854	Valid_PPYoloELoss/loss_cls: 0.8045437335968018	Valid_PPYoloELoss/loss_iou: 0.24343331158161163	Valid_PPYoloELoss/loss_dfl: 0.7019429802894592	Valid_PPYoloELoss/loss: 1.7640979290008545	Valid_Precision@0.50: 0.3977580666542053	Valid_Recall@0.50: 0.5439242124557495	Valid_mAP@0.50: 0.4761641025543213	Valid_F1@0.50: 0.4498812258243561	
+
+Epoch 4 (5/100)  - LR/Param_group_0: 0.0004998820248702622	LR/Param_group_1: 0.0004998820248702622	
+
+Epoch 5 (6/100)  - Inference_Time: 434189.28125	Train_PPYoloELoss/loss_cls: 0.8078906536102295	Train_PPYoloELoss/loss_iou: 0.2567879855632782	Train_PPYoloELoss/loss_dfl: 0.7456126809120178	Train_PPYoloELoss/loss: 1.8226678371429443	Valid_PPYoloELoss/loss_cls: 0.8243053555488586	Valid_PPYoloELoss/loss_iou: 0.24290159344673157	Valid_PPYoloELoss/loss_dfl: 0.7018845677375793	Valid_PPYoloELoss/loss: 1.7824994325637817	Valid_Precision@0.50: 0.3754613697528839	Valid_Recall@0.50: 0.5449893474578857	Valid_mAP@0.50: 0.4651697278022766	Valid_F1@0.50: 0.43498578667640686	
+
+Epoch 5 (6/100)  - LR/Param_group_0: 0.0004995282663965506	LR/Param_group_1: 0.0004995282663965506	
+
+Epoch 6 (7/100)  - Inference_Time: 434574.75	Train_PPYoloELoss/loss_cls: 0.8009751439094543	Train_PPYoloELoss/loss_iou: 0.25397756695747375	Train_PPYoloELoss/loss_dfl: 0.7414609789848328	Train_PPYoloELoss/loss: 1.8066482543945312	Valid_PPYoloELoss/loss_cls: 0.8263269066810608	Valid_PPYoloELoss/loss_iou: 0.2460545003414154	Valid_PPYoloELoss/loss_dfl: 0.7077308297157288	Valid_PPYoloELoss/loss: 1.7953269481658936	Valid_Precision@0.50: 0.3624129891395569	Valid_Recall@0.50: 0.5299723148345947	Valid_mAP@0.50: 0.4543871283531189	Valid_F1@0.50: 0.41341710090637207	
+
+Epoch 6 (7/100)  - LR/Param_group_0: 0.0004989388365129776	LR/Param_group_1: 0.0004989388365129776	
+
+Epoch 7 (8/100)  - Inference_Time: 432085.78125	Train_PPYoloELoss/loss_cls: 0.7966992259025574	Train_PPYoloELoss/loss_iou: 0.2521709203720093	Train_PPYoloELoss/loss_dfl: 0.7396339774131775	Train_PPYoloELoss/loss: 1.7969372272491455	Valid_PPYoloELoss/loss_cls: 0.8434950709342957	Valid_PPYoloELoss/loss_iou: 0.2455252856016159	Valid_PPYoloELoss/loss_dfl: 0.7038686871528625	Valid_PPYoloELoss/loss: 1.8092445135116577	Valid_Precision@0.50: 0.35380619764328003	Valid_Recall@0.50: 0.5394431352615356	Valid_mAP@0.50: 0.45452967286109924	Valid_F1@0.50: 0.41015538573265076	
+
+Epoch 7 (8/100)  - LR/Param_group_0: 0.0004981147850015153	LR/Param_group_1: 0.0004981147850015153	
+
+Epoch 8 (9/100)  - Inference_Time: 428337.78125	Train_PPYoloELoss/loss_cls: 0.7927464842796326	Train_PPYoloELoss/loss_iou: 0.25051406025886536	Train_PPYoloELoss/loss_dfl: 0.7374505996704102	Train_PPYoloELoss/loss: 1.7877585887908936	Valid_PPYoloELoss/loss_cls: 0.8383811116218567	Valid_PPYoloELoss/loss_iou: 0.24625571072101593	Valid_PPYoloELoss/loss_dfl: 0.704414427280426	Valid_PPYoloELoss/loss: 1.806228518486023	Valid_Precision@0.50: 0.3496699631214142	Valid_Recall@0.50: 0.5320393443107605	Valid_mAP@0.50: 0.4507356286048889	Valid_F1@0.50: 0.41271287202835083	
+
+Epoch 8 (9/100)  - LR/Param_group_0: 0.0004970563726243033	LR/Param_group_1: 0.0004970563726243033	
+
+Epoch 9 (10/100)  - Inference_Time: 431973.84375	Train_PPYoloELoss/loss_cls: 0.7897549271583557	Train_PPYoloELoss/loss_iou: 0.24928267300128937	Train_PPYoloELoss/loss_dfl: 0.7358143329620361	Train_PPYoloELoss/loss: 1.780869960784912	Valid_PPYoloELoss/loss_cls: 0.8168039917945862	Valid_PPYoloELoss/loss_iou: 0.24615071713924408	Valid_PPYoloELoss/loss_dfl: 0.7038930654525757	Valid_PPYoloELoss/loss: 1.7841284275054932	Valid_Precision@0.50: 0.3728417754173279	Valid_Recall@0.50: 0.5395950675010681	Valid_mAP@0.50: 0.4655512869358063	Valid_F1@0.50: 0.4266176223754883	
+
+Epoch 9 (10/100)  - LR/Param_group_0: 0.0004957654844269825	LR/Param_group_1: 0.0004957654844269825	
+
+Epoch 10 (11/100)  - Inference_Time: 430113.4375	Train_PPYoloELoss/loss_cls: 0.7873451709747314	Train_PPYoloELoss/loss_iou: 0.2481749802827835	Train_PPYoloELoss/loss_dfl: 0.7344792485237122	Train_PPYoloELoss/loss: 1.7750210762023926	Valid_PPYoloELoss/loss_cls: 0.8114081025123596	Valid_PPYoloELoss/loss_iou: 0.24235008656978607	Valid_PPYoloELoss/loss_dfl: 0.7024271488189697	Valid_PPYoloELoss/loss: 1.7684963941574097	Valid_Precision@0.50: 0.3791446387767792	Valid_Recall@0.50: 0.5464962720870972	Valid_mAP@0.50: 0.46913567185401917	Valid_F1@0.50: 0.4362928867340088	
+
+Epoch 10 (11/100)  - LR/Param_group_0: 0.0004942425288970851	LR/Param_group_1: 0.0004942425288970851	
+
+Epoch 11 (12/100)  - Inference_Time: 427447.09375	Train_PPYoloELoss/loss_cls: 0.786053478717804	Train_PPYoloELoss/loss_iou: 0.24745476245880127	Train_PPYoloELoss/loss_dfl: 0.7339231371879578	Train_PPYoloELoss/loss: 1.7716474533081055	Valid_PPYoloELoss/loss_cls: 0.8351349234580994	Valid_PPYoloELoss/loss_iou: 0.24512387812137604	Valid_PPYoloELoss/loss_dfl: 0.702984094619751	Valid_PPYoloELoss/loss: 1.7994405031204224	Valid_Precision@0.50: 0.3525009751319885	Valid_Recall@0.50: 0.5380223989486694	Valid_mAP@0.50: 0.45578432083129883	Valid_F1@0.50: 0.4144984185695648	
+
+Epoch 11 (12/100)  - LR/Param_group_0: 0.0004924902184373991	LR/Param_group_1: 0.0004924902184373991	
+
+Epoch 12 (13/100)  - Inference_Time: 435484.96875	Train_PPYoloELoss/loss_cls: 0.7847887873649597	Train_PPYoloELoss/loss_iou: 0.24686037003993988	Train_PPYoloELoss/loss_dfl: 0.7326431274414062	Train_PPYoloELoss/loss: 1.7682595252990723	Valid_PPYoloELoss/loss_cls: 0.8396528959274292	Valid_PPYoloELoss/loss_iou: 0.24528628587722778	Valid_PPYoloELoss/loss_dfl: 0.7052630186080933	Valid_PPYoloELoss/loss: 1.8055006265640259	Valid_Precision@0.50: 0.34106960892677307	Valid_Recall@0.50: 0.5334399938583374	Valid_mAP@0.50: 0.4437192380428314	Valid_F1@0.50: 0.4007575511932373	
+
+Epoch 12 (13/100)  - LR/Param_group_0: 0.000490509107547514	LR/Param_group_1: 0.000490509107547514	
+
+Epoch 13 (14/100)  - Inference_Time: 442392.71875	Train_PPYoloELoss/loss_cls: 0.782978892326355	Train_PPYoloELoss/loss_iou: 0.24604831635951996	Train_PPYoloELoss/loss_dfl: 0.7312374711036682	Train_PPYoloELoss/loss: 1.7637228965759277	Valid_PPYoloELoss/loss_cls: 0.8337259888648987	Valid_PPYoloELoss/loss_iou: 0.24692870676517487	Valid_PPYoloELoss/loss_dfl: 0.7056156992912292	Valid_PPYoloELoss/loss: 1.8038558959960938	Valid_Precision@0.50: 0.35186904668807983	Valid_Recall@0.50: 0.5440572500228882	Valid_mAP@0.50: 0.4604577422142029	Valid_F1@0.50: 0.4136783480644226	
+
+Epoch 13 (14/100)  - LR/Param_group_0: 0.0004883027246106266	LR/Param_group_1: 0.0004883027246106266	
+
+Epoch 14 (15/100)  - Inference_Time: 432571.03125	Train_PPYoloELoss/loss_cls: 0.7829104065895081	Train_PPYoloELoss/loss_iou: 0.24612009525299072	Train_PPYoloELoss/loss_dfl: 0.7313443422317505	Train_PPYoloELoss/loss: 1.763880968093872	Valid_PPYoloELoss/loss_cls: 0.8432617783546448	Valid_PPYoloELoss/loss_iou: 0.24725794792175293	Valid_PPYoloELoss/loss_dfl: 0.705636203289032	Valid_PPYoloELoss/loss: 1.8142273426055908	Valid_Precision@0.50: 0.3459324836730957	Valid_Recall@0.50: 0.5316889882087708	Valid_mAP@0.50: 0.44944506883621216	Valid_F1@0.50: 0.40588250756263733	
+
+Epoch 14 (15/100)  - LR/Param_group_0: 0.0004858717678126239	LR/Param_group_1: 0.0004858717678126239	
+
+Epoch 15 (16/100)  - Inference_Time: 441348.9375	Train_PPYoloELoss/loss_cls: 0.780823290348053	Train_PPYoloELoss/loss_iou: 0.24521221220493317	Train_PPYoloELoss/loss_dfl: 0.7294430732727051	Train_PPYoloELoss/loss: 1.758577585220337	Valid_PPYoloELoss/loss_cls: 0.8396927118301392	Valid_PPYoloELoss/loss_iou: 0.24535170197486877	Valid_PPYoloELoss/loss_dfl: 0.7029529213905334	Valid_PPYoloELoss/loss: 1.804548978805542	Valid_Precision@0.50: 0.3647264242172241	Valid_Recall@0.50: 0.537330150604248	Valid_mAP@0.50: 0.45169907808303833	Valid_F1@0.50: 0.42467063665390015	
+
+Epoch 15 (16/100)  - LR/Param_group_0: 0.00048322056671787415	LR/Param_group_1: 0.00048322056671787415	
