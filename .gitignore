@@ -1,0 +1,4 @@
+checkpoints/drone-model/average_model.pth
+checkpoints/drone-model/averaging_snapshots.pkl
+checkpoints/drone-model/ckpt_best.pth
+checkpoints/drone-model/ckpt_latest.pth
