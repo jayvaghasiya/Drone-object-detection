@@ -2,7 +2,7 @@
 
 ## Model Training (Yolo-nas):
 
-### Output
+### Output:
 
 <p align="center">
   <img src="Output/drone-sample.gif" alt="output">
@@ -48,5 +48,5 @@
 <img src="https://github.com/jayvaghasiya/Drone-object-detection/blob/main/Evaluation-curves/Precision_Score.jpg" alt="output" height=350 width=350>
 <img src="https://github.com/jayvaghasiya/Drone-object-detection/blob/main/Evaluation-curves/Recall_Score.jpg" alt="output" height=350 width=350>
 <img src="https://github.com/jayvaghasiya/Drone-object-detection/blob/main/Evaluation-curves/Precision_Recall.jpg" alt="output" height=350 width=350>
-<img src="https://github.com/jayvaghasiya/Drone-object-detection/blob/main/Evaluation-curves/mAP_Score" alt="output" height=350 width=350>
+<img src="https://github.com/jayvaghasiya/Drone-object-detection/blob/main/Evaluation-curves/mAP_Score.jpg" alt="output" height=350 width=350>
 
